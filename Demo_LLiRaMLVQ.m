@@ -1,5 +1,6 @@
 clc; clear;
-addpath(genpath('.'));
+addpath(genpath('algorithms'));
+addpath(genpath('tools'));
 %% load the data
 [Wine,Labels] = wine_dataset;
 [~,c_X] = find(Labels'==1);
@@ -12,7 +13,7 @@ prepros = cell(1,CrossValIdx.NumTestSets);
 LLiRaMLVQ_performance = array2table(nan(CrossValIdx.NumTestSets*nb_repetitions,4),'VariableNames',{'fold','rep','trainError','testError'});
 allModels = cell(CrossValIdx.NumTestSets,nb_repetitions);
 for fold=1:CrossValIdx.NumTestSets
-    prepros{fold}=struct('M',nanmean(X(CrossValIdx.training(fold),:)),'S',nanstd(X(CrossValIdx.training(fold),:)));
+    prepros{fold}=struct('M',mean(X(CrossValIdx.training(fold),:)),'S',std(X(CrossValIdx.training(fold),:)));
     trainX=bsxfun(@rdivide,bsxfun(@minus,X(CrossValIdx.training(fold),:),prepros{fold}.M),prepros{fold}.S);
     testX =bsxfun(@rdivide,bsxfun(@minus,X(CrossValIdx.test(fold),:),    prepros{fold}.M),prepros{fold}.S);
     trainLab=c_X(CrossValIdx.training(fold)); testLab=c_X(CrossValIdx.test(fold));
@@ -55,10 +56,7 @@ function plotModel(X,c_X,useModel)
     sepy = (maxy-miny)/nb_points;
     [XX,YY] = meshgrid(minx:sepx:maxx,miny:sepy:maxy);
     xi = cell2mat(arrayfun(@(i) [XX(:,i),YY(:,i)],1:size(XX,2),'UniformOutput',false)');
-%     xi = [];
-%     for i=1:size(XX,2)
-%     	xi = [xi;XX(:,i),YY(:,i)];
-%     end
+
     P = size(xi,1);
     dist = zeros(P,length(useModel.c_w));
     for i=1:length(useModel.c_w)
