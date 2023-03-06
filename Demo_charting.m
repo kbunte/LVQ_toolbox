@@ -32,3 +32,5 @@ actModel.psis = cellfun(@(omega) omega./trace(omega'*omega),actModel.psis,'uni',
     end
 end
 disp(LGMLVQ_performance);
+fprintf('LGMLVQ AVG Training error: %f test error: %f\n',mean(table2array(LGMLVQ_performance(:,[3,4]))));
+%% TODO charting with munch

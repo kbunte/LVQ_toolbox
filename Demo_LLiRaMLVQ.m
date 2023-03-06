@@ -5,7 +5,7 @@ addpath(genpath('tools'));
 [Wine,Labels] = wine_dataset;
 [~,c_X] = find(Labels'==1);
 X = Wine';
-rng(10); % for reproducability
+rng(100); % for reproducability
 CrossValIdx = cvpartition(c_X,'KFold',5);
 %% compute the local LiRaM models
 nb_repetitions = 5;
@@ -27,6 +27,7 @@ for fold=1:CrossValIdx.NumTestSets
     end
 end
 disp(LLiRaMLVQ_performance);
+fprintf('LLiRaMLVQ AVG Training error: %f test error: %f\n',mean(table2array(LLiRaMLVQ_performance(:,[3,4]))));
 %% plot an example visualization
 fold=2;rep=1;
 trainX=bsxfun(@rdivide,bsxfun(@minus,X(CrossValIdx.training(fold),:),prepros{fold}.M),prepros{fold}.S);

@@ -1,4 +1,4 @@
-function [f G]  = LLiRaMLVQ_optfun(variables,trainSet,LabelEqualsPrototype,regularization,Lprototypes,Lrelevances,dim)
+function [f,G]  = LLiRaMLVQ_optfun(variables,trainSet,LabelEqualsPrototype,regularization,Lprototypes,Lrelevances,dim)
 % [f G] = GMLVQ_optfun(variables) 
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
@@ -10,7 +10,7 @@ c_w = variables(wIdx,1);
 
 omega = variables(relIdx(1:dim(2)),2:end);
 psis = mat2cell(variables(relIdx(dim(2)+1:end),2:1+dim(2)),dim,dim(2))';
-if length(c_w)~=length(dim), c_A = unique(round(c_w));classwise = 1;else c_A = c_w;classwise = 0;end
+if length(c_w)~=length(dim), classwise = 1;else, classwise = 0;end %c_A = unique(round(c_w));classwise = 1;else c_A = c_w;classwise = 0;
 
 P = size(trainSet,1);
 dists = zeros(P,length(c_w));
@@ -64,13 +64,13 @@ if nargout > 1  % gradient needed not just function eval
     dP = cellfun(@(x) zeros(size(x)),psis,'uni',0);
         
     nb_prototypes = length(c_w);
-    mudJ =  2*distwrong  ./(distcorrectpluswrong.^2);
-    mudK = -2*distcorrect./(distcorrectpluswrong.^2);
+%     mudJ =  2*distwrong  ./(distcorrectpluswrong.^2);
+%     mudK = -2*distcorrect./(distcorrectpluswrong.^2);
     normfactors = 4 ./ distcorrectpluswrong.^2;
     for k=1:nb_prototypes
         idxc = (k == pidxcorrect);  % Js: idxs where actual prototype is nearest correct
         idxw = (k == pidxwrong);    % Ks: idxs where actual prototype is nearest wrong            
-        if classwise, matrixIdx = classes==c_w(k);else matrixIdx = k;end % TODO: classwise not tested!
+        if classwise, matrixIdx = classes==c_w(k);else, matrixIdx = k;end % TODO: classwise not tested!
 
         dcd =  distcorrect(idxw) .* normfactors(idxw); % 4*dJ/(dJ+dK)^2 where actual w is nearest wrong
         dwd =    distwrong(idxc) .* normfactors(idxc); % 4*dK/(dJ+dK)^2 where actual w is nearest correct
