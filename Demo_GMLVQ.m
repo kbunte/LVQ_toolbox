@@ -3,7 +3,8 @@ clc; clear;
 addpath(genpath('algorithms'));
 addpath(genpath('tools'));
 %% load the data
-[Wine,Labels] = wine_dataset;
+% [Wine,Labels] = wine_dataset;
+load('data/wine_dataset.mat');
 [~,c_X] = find(Labels'==1);
 X = Wine';
 rng(100); % for reproducability
